@@ -1,18 +1,22 @@
 body
 {
-    margin: 0;
+    color: #333333;
+    background-color: #bababa;
+    width: calc(min(100vw, 100vh) + 4rem);
+    margin: auto;
 }
 
 h1
 {
     text-align: center;
+    margin: 0;
+    padding: 1rem 0;
 }
 
 main
 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: #e0e0e0;
+    padding-bottom: 2rem;
 }
 
 main .grid
@@ -22,14 +26,15 @@ main .grid
     grid-template-rows: repeat(8, 1fr);
     width: min(100vw, 100vh);
     height: min(100vw, 100vh);
+    margin: auto;
 }
 
 .lt
 {
-    background-color: white;
+    background-color: #ffcfa0;
 }
 
 .dt
 {
-    background-color: black;
+    background-color: #d28c45;
 }
