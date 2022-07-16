@@ -1,0 +1,35 @@
+body
+{
+    margin: 0;
+}
+
+h1
+{
+    text-align: center;
+}
+
+main
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main .grid
+{
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: min(100vw, 100vh);
+    height: min(100vw, 100vh);
+}
+
+.lt
+{
+    background-color: white;
+}
+
+.dt
+{
+    background-color: black;
+}
