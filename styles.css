@@ -19,7 +19,7 @@ main
     padding-bottom: 2rem;
 }
 
-main .grid
+main .board
 {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -29,12 +29,18 @@ main .grid
     margin: auto;
 }
 
-.lt
+.board .lt
 {
     background-color: #ffcfa0;
 }
 
-.dt
+.board .dt
 {
     background-color: #d28c45;
+}
+
+.board .piece
+{
+    width: 100%;
+    height: 100%;
 }
