@@ -2,7 +2,7 @@ body
 {
     color: #333333;
     background-color: #bababa;
-    width: calc(min(100vw, 100vh) + 4rem);
+    width: min(100vw, 100vh);
     margin: auto;
 }
 
@@ -24,8 +24,8 @@ main .board
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
-    width: min(100vw, 100vh);
-    height: min(100vw, 100vh);
+    width: calc(min(100vw, 100vh) - 4rem);
+    height: calc(min(100vw, 100vh) - 4rem);
     margin: auto;
 }
 
