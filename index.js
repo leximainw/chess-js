@@ -74,7 +74,7 @@ function drawBoard(board)
                         while (newTile.firstChild)
                             newTile.removeChild(newTile.firstChild);
                         pieceImg.classList.remove("dragging");
-                        piece.style = null;
+                        pieceImg.style = null;
                         newTile.appendChild(pieceImg);
                     }
                     document.removeEventListener("mousemove", moveHandler);
