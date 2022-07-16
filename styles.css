@@ -1,8 +1,9 @@
 body
 {
+    justify-content: center;
     color: #333333;
     background-color: #bababa;
-    width: min(100vw, 100vh);
+    width: calc(min(100vw, 100vh) + 2rem);
     margin: auto;
 }
 
@@ -13,13 +14,34 @@ h1
     padding: 1rem 0;
 }
 
+.borders
+{
+    display: flex;
+}
+
+.borders .border
+{
+    width: 1rem;
+    align-self: stretch;
+}
+
+.borders .border.left
+{
+    background: linear-gradient(to right, #0000, #0001 60%, #0004);
+}
+
+.borders .border.right
+{
+    background: linear-gradient(to left, #0000, #0001 60%, #0004);
+}
+
 main
 {
     background-color: #e0e0e0;
-    padding-bottom: 2rem;
+    padding: 0 2rem 2rem;
 }
 
-main .board
+.board
 {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
