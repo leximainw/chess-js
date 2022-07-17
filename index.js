@@ -31,6 +31,8 @@ function drawBoard(board)
             const dragState = {};
             pieceImg.addEventListener("mousedown", e =>
             {
+                if (piece.player != gameState.playerToMove)
+                    return;
                 dragState.startX = e.x;
                 dragState.startY = e.y;
                 dragState.dragging = false;
