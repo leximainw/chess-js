@@ -237,6 +237,7 @@ ChessBoard.prototype.testForCheck = function(player)
             }
         }
     }
+    return inCheck;
 }
 
 ChessBoard.prototype.tryMakeMove = function(move)
