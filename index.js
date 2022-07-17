@@ -71,6 +71,7 @@ function drawBoard(board)
                                 break;
                             }
                         }
+                        let undo;
                         const tiles = Array.from(boardGrid.children);
                         const startIndex = tiles.indexOf(dragState.parent);
                         const endIndex = tiles.indexOf(newTile);
@@ -82,7 +83,7 @@ function drawBoard(board)
                                 endX: endIndex % 8,
                                 endY: 7 - (endIndex & 56) / 8
                             };
-                            if (!gameState.tryMakeMove(move))
+                            if (!(undo = gameState.tryMakeMove(move)))
                                 newTile = undefined;
                         }
                         if (newTile === undefined)
@@ -92,6 +93,8 @@ function drawBoard(board)
                         pieceImg.classList.remove("dragging");
                         pieceImg.style = null;
                         newTile.appendChild(pieceImg);
+                        if (undo && undo.castleRook)
+                            drawBoard(gameState);
                     }
                     document.removeEventListener("mousemove", moveHandler);
                 },

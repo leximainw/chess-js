@@ -90,7 +90,53 @@ ChessBoard.prototype.makeMove = function(move)
     const dy = move.endY - move.startY;
     const absdx = Math.abs(dx);
     const absdy = Math.abs(dy);
-    if (piece.pieceType == 4)
+    const undo = { move };
+    if (piece.pieceType == 0 && absdx == 2 && dy == 0)
+    {
+        if (piece.hasMoved || this.testForCheck(this.playerToMove))
+            return null;
+        let targetRook;
+        let tileX = piece.position.x;
+        const tileY = piece.position.y;
+        const castleDir = Math.sign(dx);
+        for (let rayLen = 1; rayLen < 7; rayLen++)
+        {
+            tileX += castleDir;
+            if (!this.isValidTile(tileX, tileY))
+                return null;
+            targetRook = this.board[tileX][tileY];
+            if (!targetRook)
+                continue;
+            else if (targetRook.pieceType != 2 || targetRook.hasMoved
+                || targetRook.player != piece.player)
+                return null;
+            else
+                break;
+        }
+        if (!targetRook)
+            return null;
+        const rookPos = {
+            x: piece.position.x + castleDir,
+            y: tileY
+        };
+        piece.position = rookPos;
+        this.board[rookPos.x][tileY] = piece;
+        this.board[move.startX][tileY] = undefined;
+        if (this.testForCheck(this.playerToMove))
+        {
+            piece.position = { x: move.startX, y: tileY };
+            this.board[move.startX][tileY] = piece;
+            this.board[rookPos.x][tileY] = undefined;
+            return null;
+        }
+        undo.castleRook = targetRook;
+        undo.castleSrc = targetRook.position;
+        this.board[targetRook.position.x][targetRook.position.y] = undefined;
+        this.board[rookPos.x][rookPos.y] = targetRook;
+        targetRook.position = rookPos;
+        targetRook.hasMoved = true;
+    }
+    else if (piece.pieceType == 4)
     {
         if (Math.max(absdx, absdy) != 2
             || Math.min(absdx, absdy) != 1)
@@ -142,7 +188,6 @@ ChessBoard.prototype.makeMove = function(move)
         else if (piece.pieceType == 3 && !diagonal)
             return null;
     }
-    const undo = { move };
     undo.captured = this.board[move.endX][move.endY];
     const captureIndex = this.pieces.indexOf(undo.captured);
     if (captureIndex != -1)
@@ -156,17 +201,13 @@ ChessBoard.prototype.makeMove = function(move)
     return undo;
 }
 
-ChessBoard.prototype.tryMakeMove = function(move)
+ChessBoard.prototype.testForCheck = function(player)
 {
-    const currPlayer = this.playerToMove;
-    const undo = this.makeMove(move);
-    if (undo == null)
-        return null;
     let inCheck = false;
     const rayMap = [0, 1, 1, 1, 0, -1, -1, -1];
     for (const piece of this.pieces)
     {
-        if (piece.pieceType != 0 || piece.player != currPlayer)
+        if (piece.pieceType != 0 || piece.player != player)
             continue;
         for (let rayDir = 0; rayDir < 8 && !inCheck; rayDir++)
         {
@@ -196,7 +237,15 @@ ChessBoard.prototype.tryMakeMove = function(move)
             }
         }
     }
-    if (inCheck)
+}
+
+ChessBoard.prototype.tryMakeMove = function(move)
+{
+    const currPlayer = this.playerToMove;
+    const undo = this.makeMove(move);
+    if (undo == null)
+        return null;
+    if (this.testForCheck(currPlayer))
     {
         this.unmakeMove(undo);
         return null;
@@ -216,6 +265,14 @@ ChessBoard.prototype.unmakeMove = function(undo)
     {
         this.pieces.push(captured);
         this.board[captured.position.x][captured.position.y] = captured;
+    }
+    const rook = undo.castleRook;
+    if (rook)
+    {
+        this.board[rook.position.x][rook.position.y] = undefined;
+        rook.position = undo.castleSrc;
+        this.board[rook.position.x][rook.position.y] = rook;
+        rook.hasMoved = false;
     }
     this.playerToMove = (this.playerToMove + this.numPlayers - 1) % this.numPlayers;
 }
