@@ -205,6 +205,8 @@ ChessBoard.prototype.testForCheck = function(player)
 {
     let inCheck = false;
     const rayMap = [0, 1, 1, 1, 0, -1, -1, -1];
+    const knightMap = [1, 2, 2, 1, -1, -2, -2, -1];
+    const pawnMap = [-1, 1, -1, 1, -1, 0, -1, 0];
     for (const piece of this.pieces)
     {
         if (piece.pieceType != 0 || piece.player != player)
@@ -213,8 +215,18 @@ ChessBoard.prototype.testForCheck = function(player)
         {
             let tileX = piece.position.x;
             let tileY = piece.position.y;
+            const orthoRayDir = (rayDir + 2) % 8;
+            const knightX = tileX + knightMap[rayDir];
+            const knightY = tileY + knightMap[orthoRayDir];
+            if (this.isValidTile(knightX, knightY))
+            {
+                const knight = this.board[knightX][knightY];
+                if (knight && knight.pieceType == 4
+                    && knight.player != player)
+                    return true;
+            }
             const rayX = rayMap[rayDir];
-            const rayY = rayMap[(rayDir + 2) % 8];
+            const rayY = rayMap[orthoRayDir];
             const attackingSlider = rayDir % 2 ? 3 : 2;
             for (let rayLen = 1; rayLen < 8; rayLen++)
             {
@@ -225,10 +237,12 @@ ChessBoard.prototype.testForCheck = function(player)
                 const target = this.board[tileX][tileY];
                 if (!target)
                     continue;
-                else if (target.player == piece.player)
+                else if (target.player == player)
                     break;
                 else if (rayLen == 1 && target.pieceType == 0
                     || target.pieceType == attackingSlider
+                    || target.pieceType == 5 && rayLen == 1
+                    && pawnMap[rayDir] == player
                     || target.pieceType == 1)
                 {
                     inCheck = true;
