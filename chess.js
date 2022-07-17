@@ -153,7 +153,8 @@ ChessBoard.prototype.makeMove = function(move)
         if (!forward)
             return null;
         if ((absdx != 0) == !this.board[move.endX][move.endY]
-            || absdy == 2 && piece.hasMoved)
+            || (this.board[move.startX][(move.startY + move.endY) / 2]
+            || piece.hasMoved) && absdy == 2)
             return null;
     }
     else
