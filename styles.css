@@ -64,11 +64,16 @@ main
     background-color: #d28c45;
 }
 
-.board .piece
+.board .piece, .board .move-target
 {
     display: block;
     width: 100%;
     height: 100%;
+}
+
+.board .move-target
+{
+    background-color: #00ff0080;
 }
 
 .piece.dragging

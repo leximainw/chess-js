@@ -52,6 +52,7 @@ function drawBoard(board)
                             pieceImg.style.height = `${pieceImg.clientHeight}px`;
                             pieceImg.classList.add("dragging");
                             document.body.prepend(pieceImg);
+                            drawMoves(piece.position.x, piece.position.y);
                         }
                         pieceImg.style.left = `${dragState.left + dx}px`;
                         pieceImg.style.top = `${dragState.top + dy}px`;
@@ -64,6 +65,7 @@ function drawBoard(board)
                     dragState.endY = e.y;
                     if (dragState.dragging)
                     {
+                        clearMoves();
                         const imgRect = pieceImg.getBoundingClientRect();
                         const imgX = (imgRect.left + imgRect.right) / 2;
                         const imgY = (imgRect.top + imgRect.bottom) / 2;
@@ -79,14 +81,12 @@ function drawBoard(board)
                             }
                         }
                         let undo;
-                        const tiles = Array.from(boardGrid.children);
-                        const startIndex = tiles.indexOf(dragState.parent);
-                        const endIndex = tiles.indexOf(newTile);
-                        if (startIndex != -1 && endIndex != -1)
+                        const endIndex = Array.from(boardGrid.children).indexOf(newTile);
+                        if (endIndex != -1)
                         {
                             const move = {
-                                startX: startIndex % 8,
-                                startY: 7 - (startIndex & 56) / 8,
+                                startX: piece.position.x,
+                                startY: piece.position.y,
                                 endX: endIndex % 8,
                                 endY: 7 - (endIndex & 56) / 8
                             };
@@ -121,6 +121,30 @@ function drawBoard(board)
         }
         const index = piece.position.x + 56 - piece.position.y * 8;
         boardGrid.children[index].appendChild(pieceImg);
+    }
+}
+
+function clearMoves()
+{
+    for (const elem of document.querySelectorAll(".move-target"))
+        elem.parentElement.removeChild(elem);
+}
+
+function drawMoves(startX, startY)
+{
+    for (let endY = 0; endY < 8; endY++)
+    {
+        for (let endX = 0; endX < 8; endX++)
+        {
+            if (gameState.isLegalMove(
+                { startX, startY, endX, endY }))
+            {
+                const index = endX + 56 - endY * 8;
+                const overlay = document.createElement("div");
+                overlay.classList.add("move-target");
+                boardGrid.children[index].appendChild(overlay);
+            }
+        }
     }
 }
 
