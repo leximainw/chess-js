@@ -2,6 +2,13 @@ const boardGrid = document.querySelector("main .board");
 const gameState = new ChessBoard();
 init();
 
+const gameSounds = [
+    new Audio("sounds/move-self.mp3"),
+    new Audio("sounds/capture.mp3"),
+    new Audio("sounds/castle.mp3"),
+    new Audio("sounds/move-check.mp3")
+];
+
 // source: https://stackoverflow.com/questions/36532307/rem-px-in-javascript
 function convertRemToPx(rem)
 {
@@ -93,8 +100,19 @@ function drawBoard(board)
                         pieceImg.classList.remove("dragging");
                         pieceImg.style = null;
                         newTile.appendChild(pieceImg);
-                        if (undo && undo.castleRook)
-                            drawBoard(gameState);
+                        if (undo)
+                        {
+                            if (undo.castleRook)
+                                drawBoard(gameState);
+                            if (gameState.testForCheck(gameState.playerToMove))
+                                gameSounds[3].play();
+                            else if (undo.castleRook)
+                                gameSounds[2].play();
+                            else if (undo.captured)
+                                gameSounds[1].play();
+                            else
+                                gameSounds[0].play();
+                        }
                     }
                     document.removeEventListener("mousemove", moveHandler);
                 },
