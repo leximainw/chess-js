@@ -152,10 +152,18 @@ ChessBoard.prototype.makeMove = function(move)
         const forward = Math.sign(dy) == -Math.sign(piece.player - 0.5);
         if (!forward)
             return null;
-        if ((absdx != 0) == !this.board[move.endX][move.endY]
-            || (this.board[move.startX][(move.startY + move.endY) / 2]
-            || piece.hasMoved) && absdy == 2)
-            return null;
+        const target = this.board[move.endX][move.endY];
+        if (absdx != 0)
+        {
+            if (!target || target.player == piece.player)
+                return null;
+        }
+        else
+        {
+            if (target || absdy == 2 && (piece.hasMoved
+                || this.board[move.startX][(move.startY + move.endY) / 2]))
+                return null;
+        }
     }
     else
     {
