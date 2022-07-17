@@ -248,6 +248,8 @@ ChessBoard.prototype.testForCheck = function(player)
                     inCheck = true;
                     break;
                 }
+                else
+                    break;
             }
         }
     }
