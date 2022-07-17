@@ -38,8 +38,8 @@ function drawBoard(board)
                         {
                             dragState.dragging = true;
                             const rect = pieceImg.getBoundingClientRect();
-                            dragState.left = rect.left + window.screenX;
-                            dragState.top = rect.top + window.screenY;
+                            dragState.left = rect.left + window.scrollX;
+                            dragState.top = rect.top + window.scrollY;
                             dragState.parent = pieceImg.parentElement;
                             pieceImg.style.width = `${pieceImg.clientWidth}px`;
                             pieceImg.style.height = `${pieceImg.clientHeight}px`;
@@ -60,17 +60,33 @@ function drawBoard(board)
                         const imgRect = pieceImg.getBoundingClientRect();
                         const imgX = (imgRect.left + imgRect.right) / 2;
                         const imgY = (imgRect.top + imgRect.bottom) / 2;
+                        let newTile = undefined;
                         for (const tile of boardGrid.children)
                         {
                             const rect = tile.getBoundingClientRect();
                             if (imgX >= rect.left && imgY >= rect.top
                                 && imgX < rect.right && imgY < rect.bottom)
                             {
-                                dragState.parent = tile;
+                                newTile = tile;
                                 break;
                             }
                         }
-                        const newTile = dragState.parent;
+                        const tiles = Array.from(boardGrid.children);
+                        const startIndex = tiles.indexOf(dragState.parent);
+                        const endIndex = tiles.indexOf(newTile);
+                        if (startIndex != -1 && endIndex != -1)
+                        {
+                            const move = {
+                                startX: startIndex % 8,
+                                startY: 7 - (startIndex & 56) / 8,
+                                endX: endIndex % 8,
+                                endY: 7 - (endIndex & 56) / 8
+                            };
+                            if (!gameState.tryMakeMove(move))
+                                newTile = undefined;
+                        }
+                        if (newTile === undefined)
+                            newTile = dragState.parent;
                         while (newTile.firstChild)
                             newTile.removeChild(newTile.firstChild);
                         pieceImg.classList.remove("dragging");
