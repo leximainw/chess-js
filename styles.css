@@ -1,9 +1,12 @@
 body
 {
+    display: flex;
     justify-content: center;
+    align-items: center;
     color: #333333;
     background-color: #bababa;
-    width: calc(min(100vw, 100vh) + 2rem);
+    width: min(calc(min(100vw, 100vh) + 2rem), 100vw);
+    min-height: 100vh;
     margin: auto;
 }
 
@@ -21,7 +24,7 @@ h1
 
 .borders .border
 {
-    width: 1rem;
+    width: min(calc(100vw - 100vh), 1rem);
     align-self: stretch;
 }
 
