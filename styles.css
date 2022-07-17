@@ -76,6 +76,11 @@ main
     background-color: #00ff0080;
 }
 
+.board .capture-target
+{
+    background-color: #ff000080;
+}
+
 .piece.dragging
 {
     position: absolute;

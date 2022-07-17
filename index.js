@@ -20,7 +20,7 @@ function drawBoard(board)
     for (const piece of board.pieces)
     {
         let pieceImg = document.querySelector(`#piece${piece.id}`);
-        if (pieceImg === null)
+        if (pieceImg == null)
         {
             pieceImg = document.createElement("img");
             pieceImg.id = `piece${piece.id}`;
@@ -130,6 +130,8 @@ function clearMoves()
 {
     for (const elem of document.querySelectorAll(".move-target"))
         elem.parentElement.removeChild(elem);
+    for (const elem of document.querySelectorAll(".capture-target"))
+        elem.classList.remove("capture-target");
 }
 
 function drawMoves(startX, startY)
@@ -142,9 +144,15 @@ function drawMoves(startX, startY)
                 { startX, startY, endX, endY }))
             {
                 const index = endX + 56 - endY * 8;
-                const overlay = document.createElement("div");
-                overlay.classList.add("move-target");
-                boardGrid.children[index].appendChild(overlay);
+                const elem = boardGrid.children[index];
+                if (!elem.children.length)
+                {
+                    const overlay = document.createElement("div");
+                    overlay.classList.add("move-target");
+                    elem.appendChild(overlay);
+                }
+                else
+                    elem.children[0].classList.add("capture-target");
             }
         }
     }
