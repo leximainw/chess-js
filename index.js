@@ -109,7 +109,7 @@ function drawBoard(board)
                             if (undo.captured)
                             {
                                 const capturedImg = document.querySelector(`#piece${undo.captured.id}`);
-                                if (capturedImg.parentElement != null)
+                                if (capturedImg && capturedImg.parentElement != null)
                                     capturedImg.parentElement.removeChild(capturedImg);
                             }
                             if (gameState.testForCheck(gameState.playerToMove))

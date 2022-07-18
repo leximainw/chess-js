@@ -71,7 +71,8 @@ ChessBoard.prototype.isLegalMove = function(move)
     this.unmakeMove(undo);
     return {
         isCapture: !!undo.captured,
-        isEnPassant: undo.captured && undo.captured.position.y != undo.endY
+        isEnPassant: !!(undo.captured && undo.captured.position.y != undo.endY),
+        promoted: !!undo.wasPromoted
     };
 }
 
@@ -213,7 +214,7 @@ ChessBoard.prototype.makeMove = function(move)
     }
     undo.captured = this.board[move.endX][move.endY];
     if (piece.pieceType == 5 && move.startX != move.endX
-        && move.endX == epTarget.x && move.endY == epTarget.y)
+        && epTarget && move.endX == epTarget.x && move.endY == epTarget.y)
     {
         undo.captured = this.board[move.endX][move.startY];
         this.board[move.endX][move.startY] = undefined;
