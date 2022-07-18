@@ -58,6 +58,7 @@ function ChessBoard()
         });
     for (const piece of this.pieces)
         piece.hasMoved = false;
+    this.enPassantTarget = null;
     this.playerToMove = 0;
     this.numPlayers = 2;
 }
@@ -66,9 +67,12 @@ ChessBoard.prototype.isLegalMove = function(move)
 {
     let undo = null
     if (!(undo = this.tryMakeMove(move)))
-        return false;
+        return null;
     this.unmakeMove(undo);
-    return true;
+    return {
+        isCapture: !!undo.captured,
+        isEnPassant: undo.captured && undo.captured.position.y != undo.endY
+    };
 }
 
 ChessBoard.prototype.isValidTile = function(x, y)
@@ -91,6 +95,8 @@ ChessBoard.prototype.makeMove = function(move)
     const absdx = Math.abs(dx);
     const absdy = Math.abs(dy);
     const undo = { move };
+    const epTarget = undo.epTarget = this.enPassantTarget;
+    let nextEPTarget = null;
     if (piece.pieceType == 0 && absdx == 2 && dy == 0)
     {
         if (piece.hasMoved || this.testForCheck(this.playerToMove))
@@ -155,7 +161,8 @@ ChessBoard.prototype.makeMove = function(move)
         const target = this.board[move.endX][move.endY];
         if (absdx != 0)
         {
-            if (!target || target.player == piece.player)
+            if ((epTarget == null || move.endX != epTarget.x || move.endY != epTarget.y)
+                && (!target || target.player == piece.player))
                 return null;
         }
         else
@@ -163,6 +170,13 @@ ChessBoard.prototype.makeMove = function(move)
             if (target || absdy == 2 && (piece.hasMoved
                 || this.board[move.startX][(move.startY + move.endY) / 2]))
                 return null;
+        }
+        if (absdy == 2)
+        {
+            nextEPTarget = {
+                x: move.startX,
+                y: (move.startY + move.endY) / 2
+            };
         }
     }
     else
@@ -198,6 +212,12 @@ ChessBoard.prototype.makeMove = function(move)
             return null;
     }
     undo.captured = this.board[move.endX][move.endY];
+    if (piece.pieceType == 5 && move.startX != move.endX
+        && move.endX == epTarget.x && move.endY == epTarget.y)
+    {
+        undo.captured = this.board[move.endX][move.startY];
+        this.board[move.endX][move.startY] = undefined;
+    }
     const captureIndex = this.pieces.indexOf(undo.captured);
     if (captureIndex != -1)
         this.pieces.splice(captureIndex, 1);
@@ -206,6 +226,12 @@ ChessBoard.prototype.makeMove = function(move)
     piece.position = { x: move.endX, y: move.endY };
     undo.hadMoved = piece.hasMoved;
     piece.hasMoved = true;
+    if (piece.pieceType == 5 && piece.position.y == (piece.player ? 0 : 7))
+    {
+        piece.pieceType = 1;
+        undo.wasPromoted = true;
+    }
+    this.enPassantTarget = nextEPTarget;
     this.playerToMove = (this.playerToMove + 1) % this.numPlayers;
     return undo;
 }
@@ -286,6 +312,8 @@ ChessBoard.prototype.unmakeMove = function(undo)
     this.board[undo.move.endX][undo.move.endY] = undefined;
     piece.position = { x: undo.move.startX, y: undo.move.startY };
     piece.hasMoved = undo.hadMoved;
+    if (undo.wasPromoted)
+        piece.pieceType = 5;
     const captured = undo.captured;
     if (captured)
     {
@@ -300,5 +328,6 @@ ChessBoard.prototype.unmakeMove = function(undo)
         this.board[rook.position.x][rook.position.y] = rook;
         rook.hasMoved = false;
     }
+    this.enPassantTarget = undo.epTarget;
     this.playerToMove = (this.playerToMove + this.numPlayers - 1) % this.numPlayers;
 }

@@ -76,7 +76,8 @@ main
     background-color: #00ff0080;
 }
 
-.board .capture-target
+.board .capture-target,
+.board .move-target.ep
 {
     background-color: #ff000080;
 }

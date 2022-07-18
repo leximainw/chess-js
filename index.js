@@ -106,6 +106,12 @@ function drawBoard(board)
                         {
                             if (undo.castleRook)
                                 drawBoard(gameState);
+                            if (undo.captured)
+                            {
+                                const capturedImg = document.querySelector(`#piece${undo.captured.id}`);
+                                if (capturedImg.parentElement != null)
+                                    capturedImg.parentElement.removeChild(capturedImg);
+                            }
                             if (gameState.testForCheck(gameState.playerToMove))
                                 gameSounds[3].play();
                             else if (undo.castleRook)
@@ -140,8 +146,9 @@ function drawMoves(startX, startY)
     {
         for (let endX = 0; endX < 8; endX++)
         {
-            if (gameState.isLegalMove(
-                { startX, startY, endX, endY }))
+            let moveInfo = gameState.isLegalMove(
+                { startX, startY, endX, endY });
+            if (moveInfo)
             {
                 const index = endX + 56 - endY * 8;
                 const elem = boardGrid.children[index];
@@ -149,6 +156,8 @@ function drawMoves(startX, startY)
                 {
                     const overlay = document.createElement("div");
                     overlay.classList.add("move-target");
+                    if (moveInfo.isEnPassant)
+                        overlay.classList.add("ep");
                     elem.appendChild(overlay);
                 }
                 else
