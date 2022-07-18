@@ -242,7 +242,7 @@ ChessBoard.prototype.testForCheck = function(player)
     let inCheck = false;
     const rayMap = [0, 1, 1, 1, 0, -1, -1, -1];
     const knightMap = [1, 2, 2, 1, -1, -2, -2, -1];
-    const pawnMap = [-1, 1, -1, 1, -1, 0, -1, 0];
+    const pawnMap = [-1, 1, -1, 0, -1, 0, -1, 1];
     for (const piece of this.pieces)
     {
         if (piece.pieceType != 0 || piece.player != player)
@@ -278,7 +278,7 @@ ChessBoard.prototype.testForCheck = function(player)
                 else if (rayLen == 1 && target.pieceType == 0
                     || target.pieceType == attackingSlider
                     || target.pieceType == 5 && rayLen == 1
-                    && pawnMap[rayDir] == player
+                    && pawnMap[rayDir] == target.player
                     || target.pieceType == 1)
                 {
                     inCheck = true;
