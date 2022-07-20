@@ -112,6 +112,9 @@ function drawBoard(board)
                                 if (capturedImg && capturedImg.parentElement != null)
                                     capturedImg.parentElement.removeChild(capturedImg);
                             }
+                            if (undo.wasPromoted)
+                                pieceImg.src = pieceImg.src.replace('Pawn',
+                                [0, 'Queen', 'Rook', 'Bishop', 'Knight'][piece.pieceType]);
                             if (gameState.testForCheck(gameState.playerToMove))
                                 gameSounds[3].play();
                             else if (undo.castleRook)
