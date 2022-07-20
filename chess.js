@@ -91,6 +91,9 @@ ChessBoard.prototype.makeMove = function(move)
     const piece = this.board[move.startX][move.startY];
     if (!piece || piece.player != this.playerToMove)
         return null;
+    if (move.promoteTo !== undefined &&
+        [1, 2, 3, 4].indexOf(move.promoteTo) == -1)
+        return null;
     const dx = move.endX - move.startX;
     const dy = move.endY - move.startY;
     const absdx = Math.abs(dx);
@@ -229,7 +232,10 @@ ChessBoard.prototype.makeMove = function(move)
     piece.hasMoved = true;
     if (piece.pieceType == 5 && piece.position.y == (piece.player ? 0 : 7))
     {
-        piece.pieceType = 1;
+        if (move.promoteTo === undefined)
+            piece.pieceType = 1;
+        else
+            piece.pieceType = move.promoteTo;
         undo.wasPromoted = true;
     }
     this.enPassantTarget = nextEPTarget;
