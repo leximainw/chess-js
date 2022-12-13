@@ -24,7 +24,7 @@ function drawBoard(board)
         {
             pieceImg = document.createElement("img");
             pieceImg.id = `piece${piece.id}`;
-            pieceImg.src = `images/${piece.piece.replace(" ", "-")}.svg`;
+            pieceImg.src = `images/${piece.piece.toLowerCase().replace(" ", "-")}.svg`;
             pieceImg.classList.add("piece");
 
             pieceImg.draggable = false;
